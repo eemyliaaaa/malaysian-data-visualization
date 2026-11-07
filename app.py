@@ -530,24 +530,26 @@ def chart_layout(height=430):
 st.markdown(
     """
     <div class="brand-header">
+
         <div>
             <div class="brand-name">
                 📊 Malaysian Data
             </div>
+
             <div class="brand-caption">
                 Interactive Data Visualization Dashboard
             </div>
         </div>
 
         <div class="brand-period">
-            MALAYSIA<br>
-            2017 – 2023
+            <span>MALAYSIA</span>
+            <span>2017 – 2023</span>
         </div>
+
     </div>
     """,
     unsafe_allow_html=True
 )
-
 
 # =========================================================
 # 7. NAVIGATION
