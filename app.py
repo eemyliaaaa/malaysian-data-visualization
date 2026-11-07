@@ -10,98 +10,156 @@ import plotly.graph_objects as go
 
 st.set_page_config(
     page_title="Malaysian Data | Visualization Dashboard",
-    page_icon="📊",
+    page_icon="🌿",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # =====================================================
-# 2. COLOUR THEME AND CUSTOM CSS
+# 2. COLOUR PALETTE
 # =====================================================
 
-MAROON = "#702D3A"
-DARK_MAROON = "#57212C"
-OLIVE = "#87966B"
-LIGHT_OLIVE = "#E9EDDF"
-CREAM = "#F8F6F0"
+DARK_GREEN = "#183D2B"
+GREEN_LIGHT = "#426B50"
+GREEN_MID = "#78927B"
+GREEN_PALE = "#E5ECE6"
+
+DARK_PINK = "#A62959"
+PINK_LIGHT = "#C6537C"
+PINK_PALE = "#F3E5EA"
+
+CREAM = "#F7F4EF"
 WHITE = "#FFFFFF"
-TEXT = "#393536"
-MUTED = "#77716D"
-BORDER = "#E9E3DA"
+TEXT = "#343434"
+MUTED = "#77716F"
+BORDER = "#E7DFDA"
+
+STATE_COLORS = [
+    "#183D2B", "#A62959", "#426B50", "#C6537C",
+    "#315C43", "#8E3158", "#53785B", "#B64B72",
+    "#244B35", "#D07896", "#426B50", "#A62959",
+    "#315C43", "#C6537C", "#53785B", "#8E3158",
+    "#183D2B"
+]
+
+# =====================================================
+# 3. CUSTOM CSS
+# =====================================================
 
 st.markdown(
     f"""
     <style>
 
-    /* Main application */
+    /* Main background */
     .stApp {{
         background-color: {CREAM};
         color: {TEXT};
     }}
 
     .main .block-container {{
-        padding-top: 2.2rem;
-        padding-bottom: 3rem;
         max-width: 1450px;
+        padding: 2rem 3rem 3rem 3rem;
     }}
 
-    /* Sidebar */
-    section[data-testid="stSidebar"] {{
-        background-color: {MAROON};
-        border-right: none;
+    /* Hide the old sidebar */
+    [data-testid="stSidebar"] {{
+        display: none;
     }}
 
-    section[data-testid="stSidebar"] * {{
-        color: white;
-    }}
-
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label {{
-        padding: 8px 10px;
-        border-radius: 8px;
-    }}
-
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {{
-        background-color: rgba(255,255,255,0.12);
-    }}
-
-    /* Headings */
+    /* Main headings */
     h1, h2, h3 {{
-        color: {MAROON} !important;
-        font-weight: 700 !important;
+        color: {DARK_GREEN} !important;
+        font-weight: 750 !important;
     }}
 
     h1 {{
         font-size: 2.15rem !important;
+        letter-spacing: -0.7px;
     }}
 
     h2 {{
-        font-size: 1.5rem !important;
+        font-size: 1.45rem !important;
     }}
 
     h3 {{
         font-size: 1.15rem !important;
     }}
 
-    /* KPI metric cards */
+    /* Brand */
+    .brand-title {{
+        color: {DARK_GREEN};
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }}
+
+    .brand-subtitle {{
+        color: {MUTED};
+        font-size: 0.9rem;
+        margin-top: -4px;
+    }}
+
+    .eyebrow {{
+        color: {DARK_PINK};
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }}
+
+    .description {{
+        color: {MUTED};
+        font-size: 0.98rem;
+        margin-bottom: 15px;
+    }}
+
+    .section-label {{
+        color: {DARK_GREEN};
+        font-size: 1.1rem;
+        font-weight: 750;
+        margin-bottom: 12px;
+    }}
+
+    /* Top navigation */
+    div[role="radiogroup"] {{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }}
+
+    div[role="radiogroup"] label {{
+        background-color: {WHITE};
+        border: 1px solid {BORDER};
+        border-radius: 10px;
+        padding: 10px 15px;
+        transition: 0.2s ease;
+    }}
+
+    div[role="radiogroup"] label:hover {{
+        border-color: {DARK_PINK};
+        background-color: {PINK_PALE};
+    }}
+
+    /* KPI cards */
     [data-testid="stMetric"] {{
         background-color: {WHITE};
         border: 1px solid {BORDER};
-        border-radius: 14px;
-        padding: 20px 22px;
-        min-height: 125px;
-        box-shadow: 0 3px 12px rgba(60,40,40,0.04);
+        border-radius: 15px;
+        padding: 20px;
+        min-height: 120px;
+        box-shadow: 0 3px 12px rgba(24,61,43,0.05);
     }}
 
     [data-testid="stMetricLabel"] {{
         color: {MUTED} !important;
-        font-size: 0.9rem !important;
-        font-weight: 500 !important;
+        font-size: 0.88rem !important;
     }}
 
     [data-testid="stMetricValue"] {{
-        color: {MAROON} !important;
+        color: {DARK_GREEN} !important;
         font-size: 1.65rem !important;
-        font-weight: 700 !important;
+        font-weight: 750 !important;
         white-space: normal !important;
         overflow-wrap: anywhere !important;
     }}
@@ -109,33 +167,41 @@ st.markdown(
     /* Dividers */
     hr {{
         border-color: {BORDER};
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        margin: 1.5rem 0;
     }}
 
-    /* Select boxes and sliders */
+    /* Select boxes */
     div[data-baseweb="select"] > div {{
+        background-color: {WHITE};
         border-radius: 9px;
+        border-color: {BORDER};
     }}
 
-    /* Dataframes */
+    /* Data tables */
     [data-testid="stDataFrame"] {{
         border: 1px solid {BORDER};
         border-radius: 10px;
         overflow: hidden;
     }}
 
-    /* Buttons */
+    /* Expanders */
+    [data-testid="stExpander"] {{
+        background-color: {WHITE};
+        border: 1px solid {BORDER};
+        border-radius: 12px;
+    }}
+
+    /* Download buttons */
     .stDownloadButton button {{
-        background-color: {OLIVE};
+        background-color: {DARK_GREEN};
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 9px;
         font-weight: 600;
     }}
 
     .stDownloadButton button:hover {{
-        background-color: {MAROON};
+        background-color: {DARK_PINK};
         color: white;
     }}
 
@@ -144,35 +210,13 @@ st.markdown(
         border-radius: 10px;
     }}
 
-    /* Custom header */
-    .dashboard-tag {{
-        color: {OLIVE};
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-    }}
-
-    .page-description {{
-        color: {MUTED};
-        font-size: 1rem;
-        margin-bottom: 1.4rem;
-    }}
-
-    .section-label {{
-        color: {MAROON};
-        font-size: 1.15rem;
-        font-weight: 700;
-        margin-top: 10px;
-        margin-bottom: 12px;
-    }}
-
+    /* Footer */
     .footer {{
-        color: {MUTED};
-        font-size: 0.8rem;
         text-align: center;
-        padding: 15px 0;
+        color: {MUTED};
+        font-size: 0.82rem;
+        padding: 20px 0;
+        line-height: 1.8;
     }}
 
     </style>
@@ -181,7 +225,7 @@ st.markdown(
 )
 
 # =====================================================
-# 3. LOAD DATASETS
+# 4. LOAD DATASETS
 # =====================================================
 
 @st.cache_data
@@ -191,12 +235,12 @@ def load_data():
     income = pd.read_csv("income_clean.csv")
     marriages = pd.read_csv("marriages_clean.csv")
 
-    # Standardise state names
     for df in [population, income, marriages]:
-        df["state"] = df["state"].astype(str).str.strip()
 
-    # Ensure year columns are numeric
-    for df in [population, income, marriages]:
+        df["state"] = (
+            df["state"].astype(str).str.strip()
+        )
+
         df["year"] = pd.to_numeric(
             df["year"], errors="coerce"
         )
@@ -208,108 +252,96 @@ try:
     population, income, marriages = load_data()
 
 except Exception as error:
-    st.error(f"Unable to load the datasets: {error}")
+    st.error(f"Unable to load datasets: {error}")
     st.stop()
 
 
 # =====================================================
-# 4. COMMON CHART SETTINGS
+# 5. COMMON CHART SETTINGS
 # =====================================================
 
-CHART_LAYOUT = {
-    "template": "plotly_white",
-    "font": {
-        "family": "Arial, sans-serif",
-        "color": TEXT,
-        "size": 12
-    },
-    "paper_bgcolor": WHITE,
-    "plot_bgcolor": WHITE,
-    "margin": dict(l=25, r=25, t=65, b=35),
-    "legend": dict(
-        bgcolor="rgba(255,255,255,0.8)"
-    )
-}
+def chart_layout(height=550):
+
+    return {
+        "template": "plotly_white",
+        "height": height,
+        "paper_bgcolor": WHITE,
+        "plot_bgcolor": WHITE,
+        "font": {
+            "family": "Arial, sans-serif",
+            "color": TEXT,
+            "size": 12
+        },
+        "margin": dict(l=25, r=25, t=55, b=35)
+    }
+
 
 # =====================================================
-# 5. SIDEBAR NAVIGATION
+# 6. TOP HEADER
 # =====================================================
 
-with st.sidebar:
+header_left, header_right = st.columns([3, 1])
+
+with header_left:
 
     st.markdown(
-        """
-        <div style="padding:12px 0 22px 0;">
-            <div style="font-size:2rem;">📊</div>
-            <div style="
-                font-size:1.45rem;
-                font-weight:800;
-                color:white;">
-                Malaysian Data
-            </div>
-            <div style="
-                font-size:0.9rem;
-                color:#E9DDE0;
-                margin-top:5px;">
-                Visualization Dashboard
-            </div>
+        '<div class="brand-title">🌿 Malaysian Data</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="brand-subtitle">'
+        'Interactive Visualization Dashboard'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+with header_right:
+
+    st.markdown(
+        f"""
+        <div style="
+            text-align:right;
+            padding-top:10px;
+            color:{DARK_GREEN};
+            font-size:0.85rem;
+            font-weight:700;">
+            MALAYSIA<br>
+            2017 – 2023
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("---")
-
-    st.markdown(
-        "<p style='font-size:0.75rem;"
-        "letter-spacing:1px;font-weight:700;'>"
-        "ANALYSIS MENU</p>",
-        unsafe_allow_html=True
-    )
-
-    page = st.radio(
-        "Choose analysis",
-        [
-            "Population Analysis",
-            "Household Income Analysis",
-            "Marriage Analysis"
-        ],
-        label_visibility="collapsed"
-    )
-
-    st.markdown("---")
-
-    st.markdown(
-        """
-        <div style="padding-top:8px;">
-            <div style="font-size:0.8rem;color:#E9DDE0;">
-                DATA COVERAGE
-            </div>
-            <div style="
-                font-size:1rem;
-                font-weight:600;
-                color:white;
-                margin-top:5px;">
-                Malaysia | 2017–2023
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("---")
-
-    st.caption("Data Visualization Project")
+st.markdown("---")
 
 
 # =====================================================
-# 6. PAGE HEADER FUNCTION
+# 7. TOP NAVIGATION
+# =====================================================
+
+page = st.radio(
+    "Select Analysis",
+    [
+        "🌿 Population",
+        "🌸 Household Income",
+        "💗 Marriage"
+    ],
+    horizontal=True,
+    label_visibility="collapsed"
+)
+
+st.markdown("---")
+
+
+# =====================================================
+# 8. PAGE HEADER FUNCTION
 # =====================================================
 
 def page_header(title, description, objective):
 
     st.markdown(
-        '<div class="dashboard-tag">'
+        '<div class="eyebrow">'
         'MALAYSIAN DATA VISUALIZATION'
         '</div>',
         unsafe_allow_html=True
@@ -318,18 +350,34 @@ def page_header(title, description, objective):
     st.title(title)
 
     st.markdown(
-        f'<div class="page-description">{description}</div>',
+        f'<div class="description">{description}</div>',
         unsafe_allow_html=True
     )
 
-    st.info(f"**Visualization objective:** {objective}")
+    st.markdown(
+        f"""
+        <div style="
+            background:{GREEN_PALE};
+            border-left:4px solid {DARK_GREEN};
+            padding:15px 18px;
+            border-radius:9px;
+            margin:15px 0 25px 0;
+            color:{TEXT};">
+            <b style="color:{DARK_GREEN};">
+                Visualization Objective
+            </b><br>
+            {objective}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 # =====================================================
-# 7. POPULATION ANALYSIS
+# 9. POPULATION ANALYSIS
 # =====================================================
 
-if page == "Population Analysis":
+if page == "🌿 Population":
 
     page_header(
         "Population Analysis",
@@ -343,7 +391,6 @@ if page == "Population Analysis":
         unsafe_allow_html=True
     )
 
-    # Year filter
     years = sorted(
         population["year"].dropna().unique()
     )
@@ -360,7 +407,6 @@ if page == "Population Analysis":
         key="population_years"
     )
 
-    # Filter population data
     population_filtered = population[
         population["year"].between(
             selected_years[0],
@@ -376,7 +422,6 @@ if page == "Population Analysis":
         )["population"].sum()
     )
 
-    # Total population by year
     total_population = (
         population_trend
         .groupby("year")["population"]
@@ -392,8 +437,8 @@ if page == "Population Analysis":
     end_population = total_population.iloc[-1]
 
     growth = (
-        ((end_population - start_population)
-         / start_population * 100)
+        (end_population - start_population)
+        / start_population * 100
         if start_population != 0 else 0
     )
 
@@ -430,6 +475,7 @@ if page == "Population Analysis":
         y="population",
         color="state",
         markers=True,
+        color_discrete_sequence=STATE_COLORS,
         labels={
             "year": "Year",
             "population": "Population (thousands)",
@@ -438,8 +484,7 @@ if page == "Population Analysis":
     )
 
     fig.update_layout(
-        **CHART_LAYOUT,
-        height=560,
+        **chart_layout(600),
         hovermode="x unified",
         xaxis=dict(
             title="Year",
@@ -450,7 +495,7 @@ if page == "Population Analysis":
     )
 
     fig.update_traces(
-        line=dict(width=2),
+        line=dict(width=2.5),
         marker=dict(size=6)
     )
 
@@ -459,7 +504,6 @@ if page == "Population Analysis":
         use_container_width=True
     )
 
-    # Data table
     with st.expander("View Population Data"):
 
         st.dataframe(
@@ -477,10 +521,10 @@ if page == "Population Analysis":
 
 
 # =====================================================
-# 8. HOUSEHOLD INCOME ANALYSIS
+# 10. HOUSEHOLD INCOME ANALYSIS
 # =====================================================
 
-elif page == "Household Income Analysis":
+elif page == "🌸 Household Income":
 
     page_header(
         "Household Income Analysis",
@@ -496,7 +540,6 @@ elif page == "Household Income Analysis":
         unsafe_allow_html=True
     )
 
-    # Survey year filter
     available_years = sorted(
         income["year"].dropna().unique()
     )
@@ -527,7 +570,7 @@ elif page == "Household Income Analysis":
     )
 
     if income_chart.empty:
-        st.warning("No income data is available for this year.")
+        st.warning("No income data for this year.")
         st.stop()
 
     highest = income_chart.loc[
@@ -588,7 +631,7 @@ elif page == "Household Income Analysis":
                 ],
                 mode="lines",
                 line=dict(
-                    color="#D8D5CE",
+                    color="#D7DCD7",
                     width=3
                 ),
                 showlegend=False,
@@ -596,7 +639,7 @@ elif page == "Household Income Analysis":
             )
         )
 
-    # Median income points
+    # Median income: dark green
     fig.add_trace(
         go.Scatter(
             x=income_chart["income_median"],
@@ -604,7 +647,7 @@ elif page == "Household Income Analysis":
             mode="markers",
             name="Median Income",
             marker=dict(
-                color=OLIVE,
+                color=GREEN_LIGHT,
                 size=12,
                 line=dict(
                     color=WHITE,
@@ -619,7 +662,7 @@ elif page == "Household Income Analysis":
         )
     )
 
-    # Mean income points
+    # Mean income: dark pink
     fig.add_trace(
         go.Scatter(
             x=income_chart["income_mean"],
@@ -627,7 +670,7 @@ elif page == "Household Income Analysis":
             mode="markers",
             name="Mean Income",
             marker=dict(
-                color=MAROON,
+                color=DARK_PINK,
                 size=12,
                 line=dict(
                     color=WHITE,
@@ -643,8 +686,7 @@ elif page == "Household Income Analysis":
     )
 
     fig.update_layout(
-        **CHART_LAYOUT,
-        height=680,
+        **chart_layout(680),
         xaxis_title="Monthly Household Income (RM)",
         yaxis_title="Malaysian State",
         legend_title="Income Measurement",
@@ -656,27 +698,40 @@ elif page == "Household Income Analysis":
         use_container_width=True
     )
 
-    # Interpretation
     st.markdown("### Understanding the Income Difference")
 
     st.markdown(
-        """
-        - **Mean income:** The average household income.
-        - **Median income:** The middle value when household
-          incomes are arranged from lowest to highest.
-        - **Connecting line:** Shows the difference between
-          mean and median income for each state.
-        """
+        f"""
+        <div style="
+            background:{PINK_PALE};
+            border-left:4px solid {DARK_PINK};
+            padding:16px 18px;
+            border-radius:10px;
+            color:{TEXT};">
+            <b style="color:{DARK_GREEN};">
+                Mean Income
+            </b><br>
+            The average household income.<br><br>
+
+            <b style="color:{DARK_PINK};">
+                Median Income
+            </b><br>
+            The middle value when household incomes are
+            arranged from lowest to highest.<br><br>
+
+            <b>Connecting line</b><br>
+            Shows the difference between mean and median.
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
     st.info(
-        "When mean income is higher than median income, "
-        "higher-income households may be influencing the average. "
-        "The difference between the two measures does not, "
-        "by itself, describe the full income distribution."
+        "A mean income higher than the median may indicate "
+        "that higher-income households influence the average. "
+        "The gap alone does not describe the full income distribution."
     )
 
-    # Income data
     with st.expander("View Household Income Data"):
 
         st.dataframe(
@@ -694,10 +749,10 @@ elif page == "Household Income Analysis":
 
 
 # =====================================================
-# 9. MARRIAGE ANALYSIS
+# 11. MARRIAGE ANALYSIS
 # =====================================================
 
-elif page == "Marriage Analysis":
+elif page == "💗 Marriage":
 
     page_header(
         "Marriage Analysis",
@@ -712,7 +767,6 @@ elif page == "Marriage Analysis":
         unsafe_allow_html=True
     )
 
-    # Select female marriage records
     marriages_female = marriages[
         marriages["sex"].astype(str).str.lower() == "female"
     ].copy()
@@ -736,7 +790,7 @@ elif page == "Marriage Analysis":
     )
 
     if not available_years:
-        st.warning("No female marriage rate data is available.")
+        st.warning("No female marriage data available.")
         st.stop()
 
     selected_years = st.slider(
@@ -750,7 +804,6 @@ elif page == "Marriage Analysis":
         key="marriage_years"
     )
 
-    # Filter years
     selected_columns = [
         year for year in marriage_pivot.columns
         if selected_years[0] <= year <= selected_years[1]
@@ -759,10 +812,9 @@ elif page == "Marriage Analysis":
     marriage_filtered = marriage_pivot[selected_columns]
 
     if marriage_filtered.empty:
-        st.warning("No marriage data is available for this period.")
+        st.warning("No marriage data for this period.")
         st.stop()
 
-    # Summary metrics
     latest_year = selected_columns[-1]
 
     latest_rates = marriage_filtered[latest_year].dropna()
@@ -771,6 +823,7 @@ elif page == "Marriage Analysis":
     highest_rate = latest_rates.max()
     lowest_rate = latest_rates.min()
 
+    # KPI cards
     col1, col2, col3 = st.columns(3)
 
     col1.metric(
@@ -803,10 +856,11 @@ elif page == "Marriage Analysis":
         text_auto=".1f",
         aspect="auto",
         color_continuous_scale=[
-            "#F1EBDD",
-            "#D4B17A",
-            "#87966B",
-            "#702D3A"
+            "#E5ECE6",
+            "#78927B",
+            "#183D2B",
+            "#C6537C",
+            "#A62959"
         ],
         labels={
             "x": "Year",
@@ -816,8 +870,7 @@ elif page == "Marriage Analysis":
     )
 
     fig.update_layout(
-        **CHART_LAYOUT,
-        height=680,
+        **chart_layout(680),
         xaxis_title="Year",
         yaxis_title="Malaysian State",
         coloraxis_colorbar_title="Marriage Rate"
@@ -831,11 +884,9 @@ elif page == "Marriage Analysis":
     st.info(
         "The heatmap uses colour intensity to highlight "
         "differences in female marriage rates across states "
-        "and years. It uses the rate values recorded in "
-        "the supplied dataset."
+        "and years, based on the supplied dataset."
     )
 
-    # Marriage data
     with st.expander("View Marriage Rate Data"):
 
         st.dataframe(
@@ -852,15 +903,17 @@ elif page == "Marriage Analysis":
 
 
 # =====================================================
-# 10. FOOTER
+# 12. FOOTER
 # =====================================================
 
 st.markdown("---")
 
 st.markdown(
-    """
+    f"""
     <div class="footer">
-        <b>Malaysian Data Visualization Dashboard</b><br>
+        <b style="color:{DARK_GREEN};">
+            🌿 Malaysian Data Visualization Dashboard
+        </b><br>
         Population • Household Income • Marriage<br>
         Data Period: 2017–2023
     </div>
