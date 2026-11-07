@@ -1204,18 +1204,14 @@ elif page == "💗 Marriage":
 # =========================================================
 
 st.markdown(
-    """
-    <div class="dashboard-footer">
-        <strong>
-            📊 Malaysian Data Visualization Dashboard
-        </strong>
-        <br>
-        Population &nbsp; • &nbsp;
-        Household Income &nbsp; • &nbsp;
-        Marriage
-        <br>
-        Data Period: 2017–2023
-    </div>
-    """,
+"""<div class="dashboard-footer">
+    <strong>📊 Malaysian Data Visualization Dashboard</strong>
+    <br>
+    Population &nbsp; • &nbsp;
+    Household Income &nbsp; • &nbsp;
+    Marriage
+    <br>
+    Data Period: 2017–2023
+</div>""",
     unsafe_allow_html=True
 )
